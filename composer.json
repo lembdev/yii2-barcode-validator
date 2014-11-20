@@ -1,0 +1,21 @@
+{
+    "name": "lembadm/yii2-barcode-validator",
+    "description": "Barcode validator",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Vizhanov",
+            "email": "lembadm@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "lembadm\\barcode\\": ""
+        }
+    }
+}
