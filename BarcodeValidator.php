@@ -11,6 +11,10 @@ use yii\validators\Validator;
 
 class BarcodeValidator extends Validator
 {
+    public $type;
+
+    public $typeAttribute;
+
     public function validateAttribute($model, $attribute)
     {
         $this->addError($model, $attribute, 'The country must be either "USA" or "Web".');
