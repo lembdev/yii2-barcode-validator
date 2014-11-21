@@ -7,12 +7,14 @@
 
 namespace lembadm\barcode\type;
 
+use lembadm\barcode\BarcodeAbstract;
+
 class BarcodeEAN8 extends BarcodeAbstract
 {
     /**
      * @var integer Allowed barcode lengths
      */
-    protected $length = array(7, 8);
+    protected $length = [7, 8];
 
     /**
      * @var string Allowed barcode characters

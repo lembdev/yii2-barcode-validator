@@ -5,7 +5,7 @@
  * @license   http://astwell.com/license/
  */
 
-namespace lembadm\barcode\type;
+namespace lembadm\barcode;
 
 use Yii;
 use yii\validators\Validator;

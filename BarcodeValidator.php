@@ -11,7 +11,6 @@ use Yii;
 use yii\base\ErrorException;
 use yii\base\InvalidConfigException;
 use yii\validators\Validator;
-use lembadm\barcode\type\BarcodeAbstract;
 
 class BarcodeValidator extends Validator
 {
@@ -27,11 +26,19 @@ class BarcodeValidator extends Validator
 
     public function init()
     {
-        if(! $this->type or ! $this->typeAttribute) {
+        if(! $this->type and ! $this->typeAttribute) {
             throw new InvalidConfigException('Not set barcode type');
         }
+    }
 
-        $class = __NAMESPACE__ . '\\' .  $this->type;
+    public function validateAttribute($model, $attribute)
+    {
+        $this->getValidator($model)->validateAttribute($model, $attribute);
+    }
+
+    public function getValidator($model)
+    {
+        $class = __NAMESPACE__ . '\\type\\' . $model->{$this->type ?: $this->typeAttribute};
 
         try {
             $this->validator = new $class;
@@ -39,10 +46,7 @@ class BarcodeValidator extends Validator
         catch (ErrorException $e) {
 
         }
-    }
 
-    public function validateAttribute($model, $attribute)
-    {
-        $this->validator->validateAttribute($model, $attribute);
+        return $this->validator;
     }
 }
