@@ -9,7 +9,7 @@ namespace lembadm\barcode\type;
 
 use lembadm\barcode\BarcodeAbstract;
 
-class BarcodeEAN8 extends BarcodeAbstract
+class EAN8 extends BarcodeAbstract
 {
     /**
      * @var integer Allowed barcode lengths
