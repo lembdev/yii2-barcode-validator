@@ -9,17 +9,17 @@ namespace lembadm\barcode\type;
 
 use lembadm\barcode\AbstractType;
 
-class EAN8 extends AbstractType
+class UPCE extends AbstractType
 {
-    protected $length = [7, 8];
+    protected $length = [6, 7, 8];
 
-    protected $characters = '/^.{0-9}$/';
+    protected $characters = '/^\d+$/';
 
     protected $checksum = 'GTIN';
 
     protected function validateLength($model, $attribute)
     {
-        $this->checksum = !(strlen($model->{$attribute}) == 7)
+        $this->checksum = !(strlen($model->{$attribute}) == 8)
             ? $this->checksum
             : null;
 
