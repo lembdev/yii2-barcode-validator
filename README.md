@@ -25,7 +25,26 @@ to the require section of your `composer.json` file.
 Usage
 -----
 
-Once the extension is installed, simply use it in your code by  :
+Once the extension is installed, simply use it in your model validation rules  :
 
 ```php
-<?= \lembadm\barcode\AutoloadExample::widget(); ?>```
+<?php
+
+class Product extends ActiveRecord
+{
+
+    public function rules()
+    {
+        return [
+            // Barcode [[barcode]]
+            ['barcode', 'required'],
+            ['barcode', 'string', 'max' => 255],
+            ['barcode', BarcodeValidator::className(), 'typeAttribute' => 'code_type'],
+
+            // Barcode type [[code_type]]
+            ['code_type', 'required'],
+        ];
+    }
+
+}
+```
