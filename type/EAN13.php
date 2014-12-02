@@ -7,13 +7,30 @@
 
 namespace lembadm\barcode\type;
 
-use lembadm\barcode\AbstractType;
+use lembadm\barcode\BarcodeAbstractType;
 
-class EAN13 extends AbstractType
+/**
+ * Class EAN13
+ *
+ * The EAN 13 is composed by 12 data digits + 1 checksum digit.
+ *
+ * @link http://barcode-coder.com/en/ean-13-specification-102.html
+ * @package lembadm\barcode\type
+ */
+class EAN13 extends BarcodeAbstractType
 {
+    /**
+     * Allowed barcode lengths
+     */
     protected $length = 13;
 
-    protected $characters = '/^\d+$/';
+    /**
+     * Allowed barcode characters
+     */
+    protected $characters = '0123456789';
 
-    protected $checksum = 'GTIN';
+    /**
+     * Checksum function
+     */
+    protected $checksum = 'EAN';
 }

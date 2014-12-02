@@ -9,6 +9,11 @@ namespace lembadm\barcode;
 
 use yii\web\AssetBundle;
 
+/**
+ * Class BarcodeAsset
+ *
+ * @package lembadm\barcode
+ */
 class BarcodeAsset extends AssetBundle
 {
     public $sourcePath = '@vendor/lembadm/yii2-barcode-validator/assets';

@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://astwell.com/
+ * @link      http://astwell.com/
  * @copyright Copyright (c) 2014 Astwell Soft
- * @license http://astwell.com/license/
+ * @license   http://astwell.com/license/
  */
 
 namespace lembadm\barcode;
@@ -12,15 +12,20 @@ use yii\base\InvalidConfigException;
 use yii\helpers\Html;
 use yii\validators\Validator;
 
+/**
+ * Class BarcodeValidator
+ *
+ * @package lembadm\barcode
+ */
 class BarcodeValidator extends Validator
 {
     /**
-     * @var string
+     * Barcode type
      */
     public $type;
 
     /**
-     * @var string
+     * Barcode type in model property
      */
     public $typeAttribute;
 
@@ -40,41 +45,40 @@ class BarcodeValidator extends Validator
     public $messageChecksum;
 
     /**
-     * @var AbstractType
+     * @var \yii\base\Model Barcode adapter
      */
-    protected $validator;
+    protected $adapter;
 
     /**
      * @inheritdoc
      */
     public function init()
     {
-        if(! $this->type and ! $this->typeAttribute) {
-            throw new InvalidConfigException('Not set barcode type');
+        if ( ! $this->type and ! $this->typeAttribute) {
+            throw new InvalidConfigException( 'Not set barcode type' );
         }
-
-        $this->messageLength = $this->messageLength
-            ?: Yii::t('yii', '{attribute} should have a length of {length} characters');
-
-        $this->messageCharacters = $this->messageCharacters
-            ?: Yii::t('yii', '{attribute} contains incorrect characters');
-
-        $this->messageChecksum = $this->messageChecksum
-            ?: Yii::t('yii', '{attribute} failed checksum validation');
     }
 
     /**
      * @inheritdoc
      */
-    public function validateAttribute($model, $attribute)
+    public function validateAttribute( $model, $attribute )
     {
-        $this->getValidator($model)->validateAttribute($model, $attribute);
+        $this->getAdapter( $model )->validateAttribute( $model, $attribute );
     }
 
     /**
      * @inheritdoc
      */
-    public function clientValidateAttribute($model, $attribute, $view)
+    public function validateValue( $value )
+    {
+        return $this->getAdapter()->validateValue( $value );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function clientValidateAttribute( $model, $attribute, $view )
     {
         $attributeID = Html::getInputId($model, $attribute);
         $typeAttributeID = Html::getInputId($model, $this->typeAttribute);
@@ -86,17 +90,13 @@ class BarcodeValidator extends Validator
                 var $yiiActiveFormData = $code.closest("form").yiiActiveForm("data");
 
                 $.each($yiiActiveFormData.attributes, function () {
-                    if(this.id == "' . $attributeID . '") {
-                        this.status = 2
-                    }
+                    if(this.id == "' . $attributeID . '") this.status = 2;
                 });
-
-                //$code.trigger("blur.yiiActiveForm");
             })
         ');
 
         if($this->type) {
-            return $this->getValidator($model)->clientValidateAttribute($model, $attribute, $view);
+            return $this->getAdapter($model)->clientValidateAttribute($model, $attribute, $view);
         }
         else {
             BarcodeAsset::register($view);
@@ -115,37 +115,38 @@ class BarcodeValidator extends Validator
     {
         $label = $model->getAttributeLabel($attribute);
 
-        $options = [
-            'skipOnEmpty'   => $this->skipOnEmpty,
-            'typeAttribute' => Html::getInputId($model, $this->typeAttribute),
+        $format = function($message, $label){
+            return Yii::$app->getI18n()->format($message, ['attribute' => $label], Yii::$app->language);
+        };
+
+        return [
+            'skipOnEmpty'       => $this->skipOnEmpty,
+            'typeAttribute'     => Html::getInputId( $model, $this->typeAttribute ),
+            'messageLength'     => $format( $this->getAdapter( $model )->messageLength, $label ),
+            'messageChecksum'   => $format( $this->getAdapter( $model )->messageChecksum, $label ),
+            'messageCharacters' => $format( $this->getAdapter( $model )->messageCharacters, $label ),
         ];
-
-        $options['messageLength'] = Yii::$app->getI18n()->format($this->messageLength, [
-            'attribute' => $label
-        ], Yii::$app->language);
-
-        $options['messageChecksum'] = Yii::$app->getI18n()->format($this->messageChecksum, [
-            'attribute' => $label
-        ], Yii::$app->language);
-
-        $options['messageCharacters'] = Yii::$app->getI18n()->format($this->messageCharacters, [
-            'attribute' => $label
-        ], Yii::$app->language);
-
-        return $options;
     }
 
-    protected function getValidator($model)
+    /**
+     * @param \yii\base\Model $model
+     *
+     * @return BarcodeAbstractType
+     * @throws InvalidConfigException
+     */
+    protected function getAdapter( $model = null )
     {
-        if( !$this->validator ) {
-            $this->validator = \Yii::createObject([
-                'class' => __NAMESPACE__ . '\\type\\' . $model->{$this->type ?: $this->typeAttribute},
+        $type = $this->type ? $this->type : $model->{$this->typeAttribute};
+
+        if ( ! $this->adapter) {
+            $this->adapter = Yii::createObject( [
+                'class'             => __NAMESPACE__ . '\\type\\' . $type,
                 'messageLength'     => $this->messageLength,
                 'messageChecksum'   => $this->messageChecksum,
                 'messageCharacters' => $this->messageCharacters,
-            ]);
+            ] );
         }
 
-        return $this->validator;
+        return $this->adapter;
     }
 }

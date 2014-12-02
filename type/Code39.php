@@ -7,11 +7,26 @@
 
 namespace lembadm\barcode\type;
 
-use lembadm\barcode\AbstractType;
+use lembadm\barcode\BarcodeAbstractType;
 
-class Code39 extends AbstractType
+/**
+ * Class Code39
+ *
+ * This barcode has a variable length. It supports digits, upper cased alphabetical characters and 7 special characters
+ * like whitespace, point and dollar sign. It can have an optional checksum which is calculated with modulo 43.
+ * This standard is used worldwide and common within the industry.
+ *
+ * @package lembadm\barcode\type
+ */
+class Code39 extends BarcodeAbstractType
 {
-    protected $characters = '/^[0-9 A-Z\-\+&\/]+$/';
+    /**
+     * Allowed barcode characters
+     */
+    protected $characters = '0-9 A-Z\-\+&\/';
 
+    /**
+     * Checksum function
+     */
     protected $checksum = 'Code39';
 }

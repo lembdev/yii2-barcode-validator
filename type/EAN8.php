@@ -7,22 +7,31 @@
 
 namespace lembadm\barcode\type;
 
-use lembadm\barcode\AbstractType;
+use lembadm\barcode\BarcodeAbstractType;
 
-class EAN8 extends AbstractType
+/**
+ * Class EAN8
+ *
+ * The EAN8 is composed by 7 data digits + 1 checksum digit.
+ * The EAN8 is derived from EAN13. It is based on the same tables as EAN 13 and has the same checksum calculation.
+ *
+ * @link http://barcode-coder.com/en/ean-8-specification-101.html
+ * @package lembadm\barcode\type
+ */
+class EAN8 extends BarcodeAbstractType
 {
-    protected $length = [7, 8];
+	/**
+	 * Allowed barcode lengths
+	 */
+	protected $length = 8;
 
-    protected $characters = '/^.{0-9}$/';
+	/**
+	 * Allowed barcode characters
+	 */
+	protected $characters = '0123456789';
 
-    protected $checksum = 'GTIN';
-
-    protected function validateLength($model, $attribute)
-    {
-        $this->checksum = !(strlen($model->{$attribute}) == 7)
-            ? $this->checksum
-            : null;
-
-        parent::validateLength($model, $attribute);
-    }
+	/**
+	 * Checksum function
+	 */
+	protected $checksum = 'EAN';
 }

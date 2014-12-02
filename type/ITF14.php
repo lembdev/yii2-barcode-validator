@@ -7,13 +7,22 @@
 
 namespace lembadm\barcode\type;
 
-use lembadm\barcode\AbstractType;
+use lembadm\barcode\BarcodeAbstractType;
 
-class ITF14 extends AbstractType
+class ITF14 extends BarcodeAbstractType
 {
+    /**
+     * Allowed barcode lengths
+     */
     protected $length = 14;
 
-    protected $characters = '/^\d+$/';
+    /**
+     * Allowed barcode characters
+     */
+    protected $characters = '0123456789';
 
-    protected $checksum = 'GTIN';
+    /**
+     * Checksum function
+     */
+    protected $checksum = 'EAN';
 }

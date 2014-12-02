@@ -7,22 +7,33 @@ yii.validation.barcode = function (value, messages, options) {
         return;
     }
 
-    var $type = $('#' + options.typeAttribute);
-    var type = $type.val();
-
-    var length = null;
+    var length;
     var characters = /^\d+$/;
-    var checksum = 'GTIN';
+    var checksum = 'EAN';
+    var type = $('#' + options.typeAttribute)
+        .off('change.barcodeValidator')
+        .on('change.barcodeValidator', function(){ yii.validation.barcode(value, messages, options) })
+        .val();
 
-    if(type == 'Code39' || type == 'Code93') {
+    if(type == 'Code39') {
         characters = /^[0-9 A-Z\-\+&\/]+$/;
-        checksum = (type == 'Code39') ? 'Code39' : 'Code93';
+        checksum = 'Code39';
     }
 
-    if(type.slice(0, 3) == 'EAN') {
-        length = (type == 'EAN8') ? '7,8' : type.match(/\d+$/)[0];
-        checksum = (type.match(/\d+$/)[0] < 8) ? null : checksum;
-        checksum = (value.length == 7) ? null : checksum;
+    if(type == 'EAN8') {
+        length = 8;
+    }
+
+    if(type == 'EAN12') {
+        length = 12;
+    }
+
+    if(type == 'EAN13') {
+        length = 13;
+    }
+
+    if(type == 'ITF14') {
+        length = 14;
     }
 
     if(length) {
@@ -41,45 +52,26 @@ yii.validation.barcode = function (value, messages, options) {
         })
     }
 
-    if(checksum) {
-        switch (checksum) {
-            case 'GTIN':
-                yii.validation.barcodeChecksumGTIN(value, messages, { message: options.messageChecksum });
-                break;
-            case 'Code39':
-                yii.validation.barcodeChecksumCode39(value, messages, { message: options.messageChecksum });
-                break;
-            case 'Code93':
-                yii.validation.barcodeChecksumCode93(value, messages, { message: options.messageChecksum });
-        }
+    if(checksum && checksum == 'EAN') {
+        yii.validation.barcodeChecksumEAN(value, messages, {message: options.messageChecksum});
     }
 
-    $type
-        .off('change.barcodeValidator')
-        .on('change.barcodeValidator', function(){
-            yii.validation.barcode(value, messages, options)
-        });
+    if(checksum && checksum == 'Code39') {
+        yii.validation.barcodeChecksumCode39(value, messages, { message: options.messageChecksum });
+    }
 };
 
-yii.validation.barcodeChecksumGTIN = function (value, messages, options) {
-    if(value.length <= 7) {
-        return;
-    }
-
+yii.validation.barcodeChecksumEAN = function (value, messages, options) {
     var sum = 0;
-    var code = parseInt( value.slice(-1));
-    var length = value.length - 1;
+    var odd = true;
+    var code = parseInt(value.slice(-1));
 
-    for(var i = 0; i <= length; i++) {
-        sum += ((i % 2) === 0)
-            ? code * 3
-            : code;
+    for (var i = 11; i > -1; i--) {
+        sum += (odd ? 3 : 1) * parseInt(value.charAt(i));
+        odd = !odd;
     }
 
-    var calc = sum % 10;
-    var checksum = (calc === 0) ? 0 : (10 - calc);
-
-    if(code != checksum) {
+    if (code != ((10 - sum % 10) % 10)) {
         yii.validation.addMessage(messages, options.message, value);
     }
 };
@@ -106,55 +98,4 @@ yii.validation.barcodeChecksumCode39 = function (value, messages, options) {
     if((count % 43) == check[checksum] ) {
         yii.validation.addMessage(messages, options.message, value);
     }
-};
-
-yii.validation.barcodeChecksumCode93 = function (value, messages, options) {
-    var check = {
-        '0': 0,  '1': 1,  '2': 2,  '3': 3,  '4': 4,  '5': 5,  '6': 6,
-        '7': 7,  '8': 8,  '9': 9,  'A': 10, 'B': 11, 'C': 12, 'D': 13,
-        'E': 14, 'F': 15, 'G': 16, 'H': 17, 'I': 18, 'J': 19, 'K': 20,
-        'L': 21, 'M': 22, 'N': 23, 'O': 24, 'P': 25, 'Q': 26, 'R': 27,
-        'S': 28, 'T': 29, 'U': 30, 'V': 31, 'W': 32, 'X': 33, 'Y': 34,
-        'Z': 35, '-': 36, '.': 37, ' ': 38, '$': 39, '/': 40, '+': 41,
-        '%': 42, '!': 43, '"': 44, '§': 45, '&': 46
-    };
-    var checksum = value.slice(-2);
-    var code = value.slice(0, -2);
-    var count = 0;
-    var length = code.length % 20;
-
-    for(var i = 0; i <= code.length; i++) {
-        length = (length == 0) ? 20 : length;
-        count += check[ value[i] ] * length;
-        --length;
-    }
-
-    /*
-     $checksum = substr($value, -2, 2);
-     $value = str_split(substr($value, 0, -2));
-     $count = 0;
-     $length = count($value) % 20;
-
-     foreach($value as $char) {
-         $length = ($length == 0) ? 20 : $length;
-         $count += $check[$char] * $length;
-         --$length;
-     }
-
-     $check   = array_search(($count % 47), $check);
-     $value[] = $check;
-     $count   = 0;
-     $length  = count($value) % 15;
-
-     foreach($value as $char) {
-         $length = ($length == 0) ? 15 : $length;
-         $count += $check[$char] * $length;
-         --$length;
-     }
-
-     $check .= array_search(($count % 47), $check);
-
-     return ($check == $checksum);
-     */
-
 };
