@@ -67,7 +67,7 @@ yii.validation.barcodeChecksumEAN = function (value, messages, options) {
     var code = parseInt(value.slice(-1));
     var checksum;
 
-    for (var i = 11; i > -1; i--) {
+    for (var i = (value.length - 2); i > -1; i--) {
         sum += (odd ? 3 : 1) * parseInt(value.charAt(i));
         odd = !odd;
     }
