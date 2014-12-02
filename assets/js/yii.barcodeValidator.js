@@ -65,13 +65,16 @@ yii.validation.barcodeChecksumEAN = function (value, messages, options) {
     var sum = 0;
     var odd = true;
     var code = parseInt(value.slice(-1));
+    var checksum;
 
     for (var i = 11; i > -1; i--) {
         sum += (odd ? 3 : 1) * parseInt(value.charAt(i));
         odd = !odd;
     }
 
-    if (code != ((10 - sum % 10) % 10)) {
+    checksum = (10 - sum % 10) % 10;
+
+    if (code != checksum) {
         yii.validation.addMessage(messages, options.message, value);
     }
 };
