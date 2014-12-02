@@ -65,7 +65,7 @@ class BarcodeChecksum extends Validator
         $sum = 0;
         $odd = true;
 
-        for ($i = 6; $i > -1; $i--) {
+        for ($i = (strlen($value) - 2); $i > -1; $i--) {
             $sum += ( $odd ? 3 : 1 ) * $value[$i];
             $odd = ! $odd;
         }
