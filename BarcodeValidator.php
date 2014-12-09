@@ -83,7 +83,8 @@ class BarcodeValidator extends Validator
         $attributeID = Html::getInputId($model, $attribute);
         $typeAttributeID = Html::getInputId($model, $this->typeAttribute);
 
-        $view->registerJs('
+        $view->registerJs(
+            '
             $("#' . $typeAttributeID . '").on("change", function(){
                 var $type = $(this);
                 var $code = $("#' . $attributeID . '");
@@ -92,7 +93,10 @@ class BarcodeValidator extends Validator
                 $.each($yiiActiveFormData.attributes, function () {
                     if(this.id == "' . $attributeID . '") this.status = 2;
                 });
-            })
+            });
+            $( document ).ready(function() {
+                $("#' . $typeAttributeID . '").trigger("change");
+            });
         ');
 
         if($this->type) {
@@ -136,7 +140,9 @@ class BarcodeValidator extends Validator
      */
     protected function getAdapter( $model = null )
     {
-        $type = $this->type ? $this->type : $model->{$this->typeAttribute};
+        $type = ( $this->type ) ? $this->type : $model->{$this->typeAttribute};
+
+        $type = ($type) ?: 'Base';
 
         if ( ! $this->adapter) {
             $this->adapter = Yii::createObject( [
