@@ -20,8 +20,4 @@ use lembadm\barcode\BarcodeAbstractType;
  */
 class Base extends BarcodeAbstractType
 {
-    /**
-     * Allowed barcode characters
-     */
-    protected $characters = '*';
 }
