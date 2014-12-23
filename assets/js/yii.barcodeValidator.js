@@ -8,8 +8,8 @@ yii.validation.barcode = function (value, messages, options) {
     }
 
     var length;
-    var characters = /^\d+$/;
-    var checksum = 'EAN';
+    var characters;
+    var checksum';
     var type = $('#' + options.typeAttribute)
         .off('change.barcodeValidator')
         .on('change.barcodeValidator', function(){ yii.validation.barcode(value, messages, options) })
@@ -22,18 +22,26 @@ yii.validation.barcode = function (value, messages, options) {
 
     if(type == 'EAN8') {
         length = 8;
+        characters = /^\d+$/;
+        checksum = 'EAN';
     }
 
     if(type == 'EAN12') {
         length = 12;
+        characters = /^\d+$/;
+        checksum = 'EAN';
     }
 
     if(type == 'EAN13') {
         length = 13;
+        characters = /^\d+$/;
+        checksum = 'EAN';
     }
 
     if(type == 'ITF14') {
         length = 14;
+        characters = /^\d+$/;
+        checksum = 'EAN';
     }
 
     if(length) {
