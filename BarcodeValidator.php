@@ -140,17 +140,26 @@ class BarcodeValidator extends Validator
      */
     protected function getAdapter( $model = null )
     {
-        $type = ( $this->type ) ? $this->type : $model->{$this->typeAttribute};
-
-        $type = ($type) ?: 'Base';
-
         if ( ! $this->adapter) {
-            $this->adapter = Yii::createObject( [
-                'class'             => __NAMESPACE__ . '\\type\\' . $type,
-                'messageLength'     => $this->messageLength,
-                'messageChecksum'   => $this->messageChecksum,
-                'messageCharacters' => $this->messageCharacters,
-            ] );
+            $type = ( $this->type ) ? $this->type : $model->{$this->typeAttribute};
+            $type = ($type) ?: 'Base';
+
+            try {
+                $this->adapter = Yii::createObject( [
+                    'class'             => __NAMESPACE__ . '\\type\\' . $type,
+                    'messageLength'     => $this->messageLength,
+                    'messageChecksum'   => $this->messageChecksum,
+                    'messageCharacters' => $this->messageCharacters,
+                ] );
+            }
+            catch(\ReflectionException $e) {
+                $this->adapter = Yii::createObject( [
+                    'class'             => __NAMESPACE__ . '\\type\\Base',
+                    'messageLength'     => $this->messageLength,
+                    'messageChecksum'   => $this->messageChecksum,
+                    'messageCharacters' => $this->messageCharacters,
+                ] );
+            }
         }
 
         return $this->adapter;
