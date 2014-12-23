@@ -9,7 +9,7 @@ yii.validation.barcode = function (value, messages, options) {
 
     var length;
     var characters;
-    var checksum';
+    var checksum;
     var type = $('#' + options.typeAttribute)
         .off('change.barcodeValidator')
         .on('change.barcodeValidator', function(){ yii.validation.barcode(value, messages, options) })
