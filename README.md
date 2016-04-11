@@ -1,6 +1,6 @@
 Yii2 Barcode validator
 ======================
-Barcode validator
+Validate `Code39`, `EAN8`, `EAN12`, `EAN13`, `ITF14` barcodes
 
 Installation
 ------------
