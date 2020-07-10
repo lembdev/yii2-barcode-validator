@@ -115,7 +115,7 @@ class BarcodeValidator extends Validator
      * @param string $attribute the attribute name being validated
      * @return array the client side validation options
      */
-    protected function getClientOptions($model, $attribute)
+    public function getClientOptions($model, $attribute)
     {
         $label = $model->getAttributeLabel($attribute);
 
